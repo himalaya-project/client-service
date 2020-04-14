@@ -3,7 +3,6 @@ package com.pdomingo.client.domain.model;
 import com.pdomingo.client.domain.event.ClientDataUpdateEvent;
 import com.pdomingo.client.domain.event.ClientUnregisteredEvent;
 import com.pdoming.kernel.core.ddd.AggregateRoot;
-import com.pdoming.kernel.core.ddd.DelegatedIdentifier;
 import com.pdoming.kernel.core.util.MorePreconditions;
 import com.pdoming.kernel.core.vobjects.Address;
 import com.pdoming.kernel.core.vobjects.Email;
@@ -13,24 +12,23 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZonedDateTime;
 import java.util.Objects;
-import java.util.UUID;
 
 import static com.pdomingo.kernel.event.client.ClientDataUpdated.Field;
 
-public class Client extends AggregateRoot<Client.Id> {
+public class Client extends AggregateRoot<ClientId> {
 
-	private final Client.Id   clientId;
-	private String      name;
-	private String      surname1;
-	private String      surname2;
-	private Email       email;
-	private PhoneNumber phoneNumber;
-	private Address     shippingAddress;
-	private LocalDate   dateOfBirth;
-	private ZonedDateTime registrationDate;
-	private Status status;
+	private final ClientId      clientId;
+	private       String        name;
+	private       String        surname1;
+	private       String        surname2;
+	private       Email         email;
+	private       PhoneNumber   phoneNumber;
+	private       Address       shippingAddress;
+	private       LocalDate     dateOfBirth;
+	private       ZonedDateTime registrationDate;
+	private       Status        status;
 
-	public Client(Id clientId, String name, String surname1, String surname2, Email email, PhoneNumber phoneNumber,
+	public Client(ClientId clientId, String name, String surname1, String surname2, Email email, PhoneNumber phoneNumber,
 	              Address shippingAddress, LocalDate dateOfBirth, ZonedDateTime registrationDate, Status status)
 	{
 		this.clientId = Objects.requireNonNull(clientId, "Field clientId cannot be null");
@@ -48,7 +46,7 @@ public class Client extends AggregateRoot<Client.Id> {
 	/*------------------------------------------------------------------*/
 
 	@Override
-	public Id id() {
+	public ClientId id() {
 		return clientId;
 	}
 
@@ -129,16 +127,5 @@ public class Client extends AggregateRoot<Client.Id> {
 		status = Status.UNREGISTERED;
 		eventLog.add(new ClientUnregisteredEvent(clientId));
 		return this;
-	}
-
-	/*-------------------------------------------------------------------*/
-
-	public static class Id extends DelegatedIdentifier<UUID> {
-		public Id(UUID value) {
-			super(value);
-		}
-		public Id(String value) {
-			super(UUID.fromString(value));
-		}
 	}
 }

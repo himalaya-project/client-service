@@ -1,6 +1,6 @@
 package com.pdomingo.client.infrastructure.web.mapper;
 
-import com.pdomingo.client.domain.model.Client;
+import com.pdomingo.client.domain.model.ClientId;
 import com.pdomingo.client.domain.model.ClientSpec;
 import com.pdomingo.client.infrastructure.web.model.ClientRegistrationRequest;
 import com.pdoming.kernel.core.vobjects.Address;
@@ -23,7 +23,7 @@ public final class ClientApiMapper {
 		);
 	}
 
-	public static Client.Id map(String clientIdStr) {
-		return new Client.Id(clientIdStr);
+	public static ClientId map(String clientIdStr) {
+		return new ClientId(clientIdStr);
 	}
 }

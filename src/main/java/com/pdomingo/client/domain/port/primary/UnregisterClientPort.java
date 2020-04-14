@@ -1,7 +1,7 @@
 package com.pdomingo.client.domain.port.primary;
 
-import com.pdomingo.client.domain.model.Client;
+import com.pdomingo.client.domain.model.ClientId;
 
 public interface UnregisterClientPort {
-	void unregister(Client.Id clientId);
+	void unregister(ClientId clientId);
 }
