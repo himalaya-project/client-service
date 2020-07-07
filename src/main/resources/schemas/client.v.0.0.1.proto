@@ -1,0 +1,55 @@
+
+syntax = "proto3";
+
+option java_package = "com.pdomingo.events.client";
+option java_outer_classname = "ClientEvents";
+
+message ClientRegisteredEvent {
+    string clientId = 1;
+    uint64 timestamp = 2;
+
+    string email = 4;
+    string phoneNumber = 5;
+    string shippingAddress = 6;
+}
+
+message ClientUnregisteredEvent {
+    string clientId = 1;
+    uint64 timestamp = 2;
+}
+
+message ClientDataUpdateEvent {
+    string clientId = 1;
+    uint64 timestamp = 2;
+    Field field = 3;
+    string value = 4;
+
+    enum Field {
+        ALIAS = 0;
+        EMAIL = 1;
+        PHONE_NUMBER = 2;
+        SHIPPING_ADDRESS = 3;
+    }
+}
+
+message ClientVerificationCommand {
+    string orderId = 1;
+    string clientId = 2;
+}
+
+message ClientVerificationSucceededEvent {
+    string orderId = 1;
+    string clientId = 2;
+}
+
+message ClientVerificationFailedEvent {
+    string orderId = 1;
+    string clientId = 2;
+
+    FailureCode failureCode = 4;
+    string failureReason = 5;
+
+    enum FailureCode {
+        BLOCKED_USER = 0;
+    }
+}

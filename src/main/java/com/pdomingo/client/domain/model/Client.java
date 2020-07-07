@@ -2,22 +2,24 @@ package com.pdomingo.client.domain.model;
 
 import com.pdomingo.client.domain.event.ClientDataUpdateEvent;
 import com.pdomingo.client.domain.event.ClientUnregisteredEvent;
-import com.pdoming.kernel.core.ddd.AggregateRoot;
-import com.pdoming.kernel.core.util.MorePreconditions;
-import com.pdoming.kernel.core.vobjects.Address;
-import com.pdoming.kernel.core.vobjects.Email;
-import com.pdoming.kernel.core.vobjects.PhoneNumber;
+import com.pdomingo.kernel.core.ddd.AggregateRoot;
+import com.pdomingo.kernel.core.util.MorePreconditions;
+import com.pdomingo.kernel.core.vobjects.Address;
+import com.pdomingo.kernel.core.vobjects.Email;
+import com.pdomingo.kernel.core.vobjects.PhoneNumber;
 
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 
-import static com.pdomingo.kernel.event.client.ClientDataUpdated.Field;
+import static com.pdomingo.client.domain.event.ClientDataUpdateEvent.*;
+
 
 public class Client extends AggregateRoot<ClientId> {
 
 	private final ClientId      clientId;
+	private 	  String 	    alias;
 	private       String        name;
 	private       String        surname1;
 	private       String        surname2;
@@ -28,10 +30,12 @@ public class Client extends AggregateRoot<ClientId> {
 	private       ZonedDateTime registrationDate;
 	private       Status        status;
 
-	public Client(ClientId clientId, String name, String surname1, String surname2, Email email, PhoneNumber phoneNumber,
-	              Address shippingAddress, LocalDate dateOfBirth, ZonedDateTime registrationDate, Status status)
-	{
+	public Client(ClientId clientId, String alias, String name, String surname1, String surname2, Email email,
+				  PhoneNumber phoneNumber, Address shippingAddress, LocalDate dateOfBirth, ZonedDateTime registrationDate,
+				  Status status
+	) {
 		this.clientId = Objects.requireNonNull(clientId, "Field clientId cannot be null");
+		this.alias = MorePreconditions.checkNotEmptyOrNull(alias, "alias");
 		this.name = MorePreconditions.checkNotEmptyOrNull(name, "name");
 		this.surname1 = MorePreconditions.checkNotEmptyOrNull(surname1, "surname1");
 		this.surname2 = MorePreconditions.checkNotEmptyOrNull(surname2, "surname2");
@@ -50,8 +54,10 @@ public class Client extends AggregateRoot<ClientId> {
 		return clientId;
 	}
 
-	public String name() {
-		return name;
+	public String alias() { return alias; }
+
+	public String fullName() {
+		return name + " " + surname1 + " " + surname2;
 	}
 
 	public Email email() {
@@ -70,11 +76,15 @@ public class Client extends AggregateRoot<ClientId> {
 		return registrationDate;
 	}
 
-	public Client changeName(String newName) {
-		MorePreconditions.checkNotEmptyOrNull(newName, "newName");
-		if (!newName.equals(name)) {
-			name = newName;
-			eventLog.add(new ClientDataUpdateEvent<>(clientId, Field.NAME, newName));
+	public Status status() {
+		return status;
+	}
+
+	public Client changeAlias(String newAlias) {
+		MorePreconditions.checkNotEmptyOrNull(newAlias, "newAlias");
+		if (!newAlias.equals(alias)) {
+			alias = newAlias;
+			eventLog.add(new ClientDataUpdateEvent<>(clientId, Field.ALIAS, newAlias));
 		}
 		return this;
 	}
@@ -114,10 +124,6 @@ public class Client extends AggregateRoot<ClientId> {
 
 	public boolean isAdult() {
 		return Period.between(dateOfBirth, LocalDate.now()).getYears() >= 18;
-	}
-
-	public Status status() {
-		return status;
 	}
 
 	public Client unregister() {

@@ -1,11 +1,12 @@
 package com.pdomingo.client.configuration.amqp;
 
+import com.pdomingo.client.domain.event.ClientRegisteredEvent;
+import com.pdomingo.starter.amqp.service.AmqpRoutingConfiguration;
+import com.pdomingo.starter.amqp.service.EventMapper;
+import com.pdomingo.starter.amqp.service.Route;
 import org.springframework.amqp.core.*;
-import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
-import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 @Configuration
 public class AmqpConfiguration {
@@ -29,7 +30,17 @@ public class AmqpConfiguration {
 	}
 
 	@Bean
-	MessageConverter jacksonMessageConverter(Jackson2ObjectMapperBuilder builder) {
-		return new Jackson2JsonMessageConverter(builder.build());
+	AmqpRoutingConfiguration routingConfiguration() {
+
+		Binding clientRegisteredBinding = clientRegisteredBinding();
+
+		return AmqpRoutingConfiguration.builder()
+				.newRoute(ClientRegisteredEvent.class, Route.from(clientRegisteredBinding.getExchange(), clientRegisteredBinding.getRoutingKey()))
+				.build();
+	}
+
+	@Bean
+	EventMapper eventMapper() {
+		return new ClientEventMapper();
 	}
 }

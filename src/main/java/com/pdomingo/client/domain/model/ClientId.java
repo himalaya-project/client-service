@@ -1,6 +1,6 @@
 package com.pdomingo.client.domain.model;
 
-import com.pdoming.kernel.core.ddd.DelegatedIdentifier;
+import com.pdomingo.kernel.core.ddd.DelegatedIdentifier;
 
 import java.util.UUID;
 
